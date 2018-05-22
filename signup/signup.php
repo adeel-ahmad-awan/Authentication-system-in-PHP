@@ -5,13 +5,15 @@ $db_password = 'coeus123';
 $db_name = 'MYUSERS';
 $db_connection = null;
 
+// echo activateLink($_POST[email], generateHashOfEmailAddress($_POST[email]));
+
 // Create connection
 $db_connection = createDataBaseConnection($db_host, $db_user, $db_password, $db_name);
 
 if (!(alreadyExists($db_connection, $db_name) > 0)) {
     // insert record in database table
     insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name);
-    sendMail();
+    sendMail(activateLink($_POST[email], generateHashOfEmailAddress($_POST[email])));
 }
 
 //close database conncetion
@@ -62,7 +64,8 @@ function insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, 
 
     $email_address = $_POST[email];
     $password = $_POST[password];
-    $sql = "INSERT INTO my_users (email, password) VALUES ('$email_address', '$password')";
+    $user_hash = generateHashOfEmailAddress($email_address);
+    $sql = "INSERT INTO my_users (email, password, user_hash) VALUES ('$email_address', '$password', '$user_hash')";
     echo 'sql query = ' . $sql;
 
     executeQuery($db_connection, $sql);
@@ -84,14 +87,18 @@ function alreadyExists($db_connection, $db_name)
     return $row[0];
 }
 
-function sendMail()
+/**
+* function to varification mail to user with provided email
+* @param string $activation_link
+*/
+function sendMail($activation_link)
 {
   $to = $_POST[email];
-  $subject = "sign up successfull";
+  $subject = 'sign up successfull';
 
-  $message = "<b>congradulation you have successfully signup</b>";
-  $message .= "<p>click the following link to activate your account</p>";
-  $message .= '<a href="https://www.w3schools.com/html/">activate account</a>';
+  $message = '<b>congradulation you have successfully signup</b>';
+  $message .= '<p>click the following link to activate your account</p>';
+  $message .= "<a href=$activation_link>activate account</a>";
 
   $header .= "MIME-Version: 1.0\r\n";
   $header .= "Content-type: text/html\r\n";
@@ -103,4 +110,26 @@ function sendMail()
   }else {
      echo "Message could not be sent...";
   }
+}
+
+/**
+* function to generate Hash Of EmailAddress
+*@param string $email_address
+*@return string
+*/
+function generateHashOfEmailAddress($email_address)
+{
+  return md5($email_address);
+}
+
+/**
+* function to activation link
+*@param string $email_address
+*@param string $user_hash
+*@return string $url_link
+*/
+function activateLink($email_address, $user_hash)
+{
+  $url_link = 'http://localhost/authentication-system/activateAccount.php?email=' .$email_address .'&hash=' .$user_hash;
+  return $url_link;
 }
