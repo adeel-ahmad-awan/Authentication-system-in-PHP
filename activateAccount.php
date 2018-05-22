@@ -9,7 +9,6 @@ $db_connection = mysqli_connect($db_host, $db_user, $db_password);
 if (! $db_connection) {
     echo 'Connected failure' . '<br>';
 }
-echo 'Connected successfully' . '<br>';
 
 mysqli_select_db($db_connection, $db_name);
 
@@ -19,9 +18,6 @@ $user_hash =  $_GET[hash];
 $sql = "select * from my_users where my_users.email='$email_address'";
 
 $result = mysqli_query($db_connection, $sql) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $sql");;
-if ($result == false) {
-  echo "error in Query execution";
-}
 $row = mysqli_fetch_array($result);
 
 if ($row['email'] == $email_address && $row['user_hash'] == $user_hash) {
@@ -32,6 +28,4 @@ if ($row['email'] == $email_address && $row['user_hash'] == $user_hash) {
     echo "user account activated";
   }
 }
-
-
 mysqli_close($db_connection);

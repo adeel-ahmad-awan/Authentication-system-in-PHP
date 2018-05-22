@@ -5,7 +5,6 @@ $db_password = 'coeus123';
 $db_name = 'MYUSERS';
 $db_connection = null;
 
-// echo activateLink($_POST[email], generateHashOfEmailAddress($_POST[email]));
 
 // Create connection
 $db_connection = createDataBaseConnection($db_host, $db_user, $db_password, $db_name);
@@ -13,6 +12,7 @@ $db_connection = createDataBaseConnection($db_host, $db_user, $db_password, $db_
 if (!(alreadyExists($db_connection, $db_name) > 0)) {
     // insert record in database table
     insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name);
+    // sned activation link via email
     sendMail(activateLink($_POST[email], generateHashOfEmailAddress($_POST[email])));
 }
 
@@ -95,16 +95,12 @@ function sendMail($activation_link)
 {
   $to = $_POST[email];
   $subject = 'sign up successfull';
-
   $message = '<b>congradulation you have successfully signup</b>';
   $message .= '<p>click the following link to activate your account</p>';
   $message .= "<a href=$activation_link>activate account</a>";
-
   $header .= "MIME-Version: 1.0\r\n";
   $header .= "Content-type: text/html\r\n";
-
   $retval = mail ($to,$subject,$message,$header);
-
   if( $retval == true ) {
      echo "Message sent successfully...";
   }else {
