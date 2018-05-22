@@ -1,5 +1,24 @@
 <?php
 
+require 'credentials.php';
+
+$db_connection = createDataBaseConnection(db_host, db_user, db_password);
+executeQuery($db_connection, 'CREATE DATABASE IF NOT EXISTS ' . db_name);
+mysqli_select_db($db_connection, db_name);
+
+// sql to create table
+$sql = 'CREATE TABLE IF NOT EXISTS my_users (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(50) NOT NULL,
+  password VARCHAR(30) NOT NULL,
+  access_level ENUM( \'administrator\', \'normal\') DEFAULT \'normal\',
+  activation_status ENUM( \'activated\', \'not_activated\') DEFAULT \'not_activated\',
+  user_hash VARCHAR(50) NOT NULL )';
+
+executeQuery($db_connection, $sql);
+
+mysqli_close($db_connection);
+
 /**
 * function to execute a Query
 *@param boolean $db_connection
@@ -30,26 +49,3 @@ function createDataBaseConnection($db_host, $db_user, $db_password)
   echo 'Connected successfully' . PHP_EOL;
   return $db_connection;
 }
-
-$db_host = 'localhost:3306';
-$db_user = 'root';
-$db_password = 'coeus123';
-$db_name = 'MYUSERS';
-$db_connection = NULL;
-
-$db_connection = createDataBaseConnection($db_host, $db_user, $db_password);
-executeQuery($db_connection, 'CREATE DATABASE IF NOT EXISTS ' . $db_name);
-mysqli_select_db($db_connection, $db_name);
-
-// sql to create table
-$sql = 'CREATE TABLE IF NOT EXISTS my_users (
-  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  email VARCHAR(50) NOT NULL,
-  password VARCHAR(30) NOT NULL,
-  access_level ENUM( \'administrator\', \'normal\') DEFAULT \'normal\',
-  activation_status ENUM( \'activated\', \'not_activated\') DEFAULT \'not_activated\',
-  user_hash VARCHAR(50) NOT NULL )';
-
-executeQuery($db_connection, $sql);
-
-mysqli_close($db_connection);

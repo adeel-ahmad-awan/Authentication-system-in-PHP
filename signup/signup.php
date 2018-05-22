@@ -1,24 +1,21 @@
 <?php
-$db_host = 'localhost:3306';
-$db_user = 'root';
-$db_password = 'coeus123';
-$db_name = 'MYUSERS';
-$db_connection = null;
 
+require '../credentials.php';
 
-// Create connection
-$db_connection = createDataBaseConnection($db_host, $db_user, $db_password, $db_name);
+//Creating database connection
+$db_connection = createDataBaseConnection(db_host, db_user, db_password, db_name);
 
-if (!(alreadyExists($db_connection, $db_name) > 0)) {
+// if there is already a user with given email address
+if (!(alreadyExists($db_connection, db_name) > 0)) {
     // insert record in database table
-    insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name);
+    insertUserToDataBase($db_connection, db_host, db_user, db_password, db_name);
     // send activation link via email
     sendMail(activateLink($_POST[email], generateHashOfEmailAddress($_POST[email])));
 }
 
 //close database conncetion
 mysqli_close($db_connection);
-
+// redirect to login page
 header('Location: ../login/loginView.html');
 die();
 /**

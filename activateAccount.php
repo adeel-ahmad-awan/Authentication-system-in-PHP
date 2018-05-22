@@ -1,16 +1,14 @@
 <?php
 
-$db_host = 'localhost:3306';
-$db_user = 'root';
-$db_password = 'coeus123';
-$db_name = 'MYUSERS';
-$db_connection = mysqli_connect($db_host, $db_user, $db_password);
+require 'credentials.php';
+
+$db_connection = mysqli_connect(db_host, db_user, db_password);
 
 if (! $db_connection) {
     echo 'Connected failure' . '<br>';
 }
 
-mysqli_select_db($db_connection, $db_name);
+mysqli_select_db($db_connection, db_name);
 
 $email_address = $_GET[email];
 $user_hash =  $_GET[hash];
