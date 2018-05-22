@@ -12,10 +12,10 @@ echo 'Connected successfully' . PHP_EOL;
 
 mysqli_select_db($db_connection, $db_name);
 
-// $email_address = " .$_POST[email] . '<br>';
-// $password = " .$_POST[password] . '<br>';
-// validateEmailAndPassword($_POST[email], $_POST[password], $db_connection);
-validateEmailAndPassword('adeelahmadawan@gmail.com', 'password', $db_connection);
+$email_address = " .$_POST[email] . '<br>';
+$password = " .$_POST[password] . '<br>';
+validateEmailAndPassword($_POST[email], $_POST[password], $db_connection);
+// validateEmailAndPassword('adeelahmadawan@gmail.com', 'password', $db_connection);
 
 mysqli_close($db_connection);
 

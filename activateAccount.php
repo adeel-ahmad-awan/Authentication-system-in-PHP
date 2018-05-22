@@ -29,3 +29,6 @@ if ($row['email'] == $email_address && $row['user_hash'] == $user_hash) {
   }
 }
 mysqli_close($db_connection);
+
+header('Location: ../login/loginView.html');
+die();

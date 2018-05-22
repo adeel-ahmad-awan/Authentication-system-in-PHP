@@ -12,13 +12,15 @@ $db_connection = createDataBaseConnection($db_host, $db_user, $db_password, $db_
 if (!(alreadyExists($db_connection, $db_name) > 0)) {
     // insert record in database table
     insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name);
-    // sned activation link via email
+    // send activation link via email
     sendMail(activateLink($_POST[email], generateHashOfEmailAddress($_POST[email])));
 }
 
 //close database conncetion
 mysqli_close($db_connection);
 
+header('Location: ../login/loginView.html');
+die();
 /**
 * function to create DATABASE conncetion
 *@param string $db_host
