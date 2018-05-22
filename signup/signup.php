@@ -5,19 +5,17 @@ $db_password = 'coeus123';
 $db_name = 'MYUSERS';
 $db_connection = null;
 
-sendMail();
+// Create connection
+$db_connection = createDataBaseConnection($db_host, $db_user, $db_password, $db_name);
 
-// // Create connection
-// $db_connection = createDataBaseConnection($db_host, $db_user, $db_password, $db_name);
-//
-// if (!(alreadyExists($db_connection, $db_name) > 0)) {
-//     // insert record in database table
-//     insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name);
-//     sendMail();
-// }
-//
-// //close database conncetion
-// mysqli_close($db_connection);
+if (!(alreadyExists($db_connection, $db_name) > 0)) {
+    // insert record in database table
+    insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name);
+    sendMail();
+}
+
+//close database conncetion
+mysqli_close($db_connection);
 
 /**
 * function to create DATABASE conncetion
@@ -88,33 +86,21 @@ function alreadyExists($db_connection, $db_name)
 
 function sendMail()
 {
-    require '../PHPMailerAutoload.php';
-    $mail = new PHPMailer;
+  $to = $_POST[email];
+  $subject = "sign up successfull";
 
-    // $mail->SMTPDebug = 4;                               // Enable verbose debug output
+  $message = "<b>congradulation you have successfully signup</b>";
+  $message .= "<p>click the following link to activate your account</p>";
+  $message .= '<a href="https://www.w3schools.com/html/">activate account</a>';
 
-    $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-    $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = 'adeel.ahmed@coeus-solutions.de';                 // SMTP username
-    $mail->Password = 'coeus123';                           // SMTP password
-    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-    $mail->Port = 587;                                    // TCP port to connect to
+  $header .= "MIME-Version: 1.0\r\n";
+  $header .= "Content-type: text/html\r\n";
 
-    $mail->setFrom('adeel.ahmed@coeus-solutions.de', 'registration success');
-    $mail->addAddress('adeelahmadawan@gmail.com', 'adeel');     // Add a recipient
-    $mail->addReplyTo('adeel.ahmed@coeus-solutions.de', 'Information');
+  $retval = mail ($to,$subject,$message,$header);
 
-    $mail->isHTML(true);                                  // Set email format to HTML
-
-    $mail->Subject = 'registration success';
-    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
-    if (!$mail->send()) {
-        echo 'Message could not be sent.';
-        echo 'Mailer Error: ' . $mail->ErrorInfo;
-    } else {
-        echo 'Message has been sent';
-    }
+  if( $retval == true ) {
+     echo "Message sent successfully...";
+  }else {
+     echo "Message could not be sent...";
+  }
 }
