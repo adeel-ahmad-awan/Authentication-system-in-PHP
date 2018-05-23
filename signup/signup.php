@@ -4,20 +4,19 @@ require '../credentials.php';
 
 //Creating database connection
 $db_connection = createDataBaseConnection(db_host, db_user, db_password, db_name);
-
-// if there is already a user with given email address
+// insert if there is not a user with given email address in database
 if (!(alreadyExists($db_connection, db_name) > 0)) {
     // insert record in database table
     insertUserToDataBase($db_connection, db_host, db_user, db_password, db_name);
     // send activation link via email
     sendMail(activateLink($_POST[email], generateHashOfEmailAddress($_POST[email])));
 }
-
 //close database conncetion
 mysqli_close($db_connection);
 // redirect to login page
 header('Location: ../login/loginView.html');
 die();
+
 /**
 * function to create DATABASE conncetion
 *@param string $db_host
@@ -55,20 +54,15 @@ function executeQuery($db_connection, $sql_query)
 *@param string $db_user
 *@param string $db_password
 *@param string $db_name
-*@return boolean $db_connection
 */
 function insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name)
 {
     mysqli_select_db($db_connection, $db_name);
-
     $email_address = $_POST[email];
     $password = $_POST[password];
     $user_hash = generateHashOfEmailAddress($email_address);
     $sql = "INSERT INTO my_users (email, password, user_hash) VALUES ('$email_address', '$password', '$user_hash')";
-    echo 'sql query = ' . $sql;
-
     executeQuery($db_connection, $sql);
-    return $db_connection;
 }
 
 /**
@@ -94,11 +88,11 @@ function sendMail($activation_link)
 {
   $to = $_POST[email];
   $subject = 'sign up successfull';
-  $message = '<b>congradulation you have successfully signup</b>';
+  $message = '<b>congratulations you have successfully signup</b>';
   $message .= '<p>click the following link to activate your account</p>';
-  $message .= "<a href=$activation_link>activate account</a>";
-  $header .= "MIME-Version: 1.0\r\n";
-  $header .= "Content-type: text/html\r\n";
+  $message .= '<a href=' .$activation_link .'>activate account</a>';
+  $header .= 'MIME-Version: 1.0\r\n';
+  $header .= 'Content-type: text/html\r\n';
   $retval = mail ($to,$subject,$message,$header);
   if( $retval == true ) {
      echo "Message sent successfully...";
@@ -108,7 +102,7 @@ function sendMail($activation_link)
 }
 
 /**
-* function to generate Hash Of EmailAddress
+* function to generate Hash Of Email Address
 *@param string $email_address
 *@return string
 */
@@ -118,7 +112,7 @@ function generateHashOfEmailAddress($email_address)
 }
 
 /**
-* function to activation link
+* function to generate activation link
 *@param string $email_address
 *@param string $user_hash
 *@return string $url_link

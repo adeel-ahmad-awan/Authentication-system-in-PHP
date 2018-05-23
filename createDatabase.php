@@ -2,9 +2,12 @@
 
 require 'credentials.php';
 
+//Creating database connection
 $db_connection = createDataBaseConnection(db_host, db_user, db_password);
-executeQuery($db_connection, 'CREATE DATABASE IF NOT EXISTS ' . db_name);
+// selecting database for query execution
 mysqli_select_db($db_connection, db_name);
+// execution of query
+executeQuery($db_connection, 'CREATE DATABASE IF NOT EXISTS ' . db_name);
 
 // sql to create table
 $sql = 'CREATE TABLE IF NOT EXISTS my_users (

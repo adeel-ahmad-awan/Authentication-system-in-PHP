@@ -1,16 +1,19 @@
 <?php
 require 'credentials.php';
-$db_connection = mysqli_connect(db_host, db_user, db_password);
 
+// create database connection
+$db_connection = mysqli_connect(db_host, db_user, db_password);
 if (! $db_connection) {
     echo 'Connected failure' . PHP_EOL;
+} else {
+    echo 'Connected successfully' . PHP_EOL;
 }
-echo 'Connected successfully' . PHP_EOL;
-
+// selecting database for query execution
 mysqli_select_db($db_connection, db_name);
-
+// execution of quries
 executeQuery($db_connection, 'DROP TABLE my_users');
 executeQuery($db_connection, 'DROP DATABASE ' . db_name);
+//colsing database conncetion
 mysqli_close($db_connection);
 
 /**
