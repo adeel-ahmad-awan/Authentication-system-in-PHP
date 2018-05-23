@@ -1,52 +1,24 @@
 <?php
 
 require '../credentials.php';
+require '../common_functions.php';
 
+$email_address = $_POST[email];
+$password = $_POST[password];
 //Creating database connection
-$db_connection = createDataBaseConnection(db_host, db_user, db_password, db_name);
+$db_connection = createDataBaseConnection(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 // insert if there is not a user with given email address in database
-if (!(alreadyExists($db_connection, db_name) > 0)) {
+if (!(alreadyExists($db_connection, DB_NAME, $email_address) > 0)) {
     // insert record in database table
-    insertUserToDataBase($db_connection, db_host, db_user, db_password, db_name);
+    $user_id = insertUserToDataBase($db_connection, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, $email_address, $password);
     // send activation link via email
-    sendMail(activateLink($_POST[email], generateHashOfEmailAddress($_POST[email])));
+    sendMail(activateLink($user_id, generateHashOfEmailAddress($email_address)), $email_address);
 }
 //close database conncetion
 mysqli_close($db_connection);
 // redirect to login page
-header('Location: ../login/loginView.html');
+header('Location: ../login/login_view.html');
 die();
-
-/**
-* function to create DATABASE conncetion
-*@param string $db_host
-*@param string $db_user
-*@param string $db_password
-*@return boolean $db_connection
-*/
-function createDataBaseConnection($db_host, $db_user, $db_password)
-{
-    $db_connection = mysqli_connect($db_host, $db_user, $db_password);
-    if (! $db_connection) {
-        exit('Unable to connect <br>');
-    }
-    echo 'Connected successfully <br>';
-    return $db_connection;
-}
-
-/**
-* function to execute a Query
-*@param boolean $db_connection
-*@param string $sql_query
-*/
-function executeQuery($db_connection, $sql_query)
-{
-    if (mysqli_query($db_connection, $sql_query)) {
-        echo "New record created successfully";
-    } else {
-        echo 'Error in query execution: ' . mysqli_error($db_connection) .' <br>';
-    }
-}
 
 /**
 * function to insert user email and password to database
@@ -54,15 +26,14 @@ function executeQuery($db_connection, $sql_query)
 *@param string $db_user
 *@param string $db_password
 *@param string $db_name
+*@return integer $user_id
 */
-function insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name)
+function insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, $db_name, $email_address, $password)
 {
     mysqli_select_db($db_connection, $db_name);
-    $email_address = $_POST[email];
-    $password = $_POST[password];
     $user_hash = generateHashOfEmailAddress($email_address);
-    $sql = "INSERT INTO my_users (email, password, user_hash) VALUES ('$email_address', '$password', '$user_hash')";
-    executeQuery($db_connection, $sql);
+    $sql = "INSERT INTO users (email, password, user_hash) VALUES ('$email_address', '$password', '$user_hash')";
+    return executeQuery($db_connection, $sql);
 }
 
 /**
@@ -70,11 +41,10 @@ function insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, 
 *@param string $email
 *@return integer
 */
-function alreadyExists($db_connection, $db_name)
+function alreadyExists($db_connection, $db_name, $email_address)
 {
     mysqli_select_db($db_connection, $db_name);
-    $email_address = $_POST[email];
-    $sql = "select count(*) from my_users where email = '$email_address'";
+    $sql = "select count(*) from users where email = '$email_address'";
     $result = mysqli_query($db_connection, $sql);
     $row = mysqli_fetch_array($result, MYSQLI_NUM);
     return $row[0];
@@ -84,15 +54,13 @@ function alreadyExists($db_connection, $db_name)
 * function to varification mail to user with provided email
 * @param string $activation_link
 */
-function sendMail($activation_link)
+function sendMail($activation_link, $email_address)
 {
-  $to = $_POST[email];
+  $to = $email_address;
   $subject = 'sign up successfull';
   $message = '<b>congratulations you have successfully signup</b>';
   $message .= '<p>click the following link to activate your account</p>';
   $message .= '<a href=' .$activation_link .'>activate account</a>';
-  $header .= 'MIME-Version: 1.0\r\n';
-  $header .= 'Content-type: text/html\r\n';
   $retval = mail ($to,$subject,$message,$header);
   if( $retval == true ) {
      echo "Message sent successfully...";
@@ -117,8 +85,8 @@ function generateHashOfEmailAddress($email_address)
 *@param string $user_hash
 *@return string $url_link
 */
-function activateLink($email_address, $user_hash)
+function activateLink($user_id, $user_hash)
 {
-  $url_link = 'http://localhost/authentication-system/activateAccount.php?email=' .$email_address .'&hash=' .$user_hash;
+  $url_link = 'http://localhost/authentication-system/activate_account.php?user_id=' .$user_id .'&hash=' .$user_hash;
   return $url_link;
 }
