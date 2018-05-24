@@ -32,8 +32,8 @@ function insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, 
 {
     mysqli_select_db($db_connection, $db_name);
     $user_hash = generateHashOfEmailAddress($email_address);
-    $sql = "INSERT INTO users (email, password, user_hash) VALUES ('$email_address', '$password', '$user_hash')";
-    return executeQuery($db_connection, $sql);
+    $query = "INSERT INTO users (email, password, user_hash) VALUES ('$email_address', '$password', '$user_hash')";
+    return executeQuery($db_connection, $query);
 }
 
 /**
@@ -44,8 +44,8 @@ function insertUserToDataBase($db_connection, $db_host, $db_user, $db_password, 
 function alreadyExists($db_connection, $db_name, $email_address)
 {
     mysqli_select_db($db_connection, $db_name);
-    $sql = "select count(*) from users where email = '$email_address'";
-    $result = mysqli_query($db_connection, $sql);
+    $query = "select count(*) from users where email = '$email_address'";
+    $result = mysqli_query($db_connection, $query);
     $row = mysqli_fetch_array($result, MYSQLI_NUM);
     return $row[0];
 }

@@ -13,14 +13,14 @@ executeQuery($db_connection, 'CREATE DATABASE IF NOT EXISTS ' . DB_NAME);
 mysqli_select_db($db_connection, DB_NAME);
 
 // sql to create table
-$sql = 'CREATE TABLE IF NOT EXISTS users (
+$query = 'CREATE TABLE IF NOT EXISTS users (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  email VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL UNIQUE,
   password VARCHAR(30) NOT NULL,
   access_level ENUM( \'administrator\', \'normal\') DEFAULT \'normal\',
   activation_status ENUM( \'activated\', \'not_activated\') DEFAULT \'not_activated\',
-  user_hash VARCHAR(50) NOT NULL )';
+  user_hash VARCHAR(32) NOT NULL )';
 
-executeQuery($db_connection, $sql);
+executeQuery($db_connection, $query);
 
 mysqli_close($db_connection);

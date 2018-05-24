@@ -9,13 +9,13 @@ mysqli_select_db($db_connection, DB_NAME);
 $user_id = $_GET[user_id];
 $user_hash =  $_GET[hash];
 
-$sql = "select * from users where users.id='$user_id' and users.user_hash='$user_hash'";
-$result = mysqli_query($db_connection, $sql) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $sql");;
+$query = "select * from users where users.id='$user_id' and users.user_hash='$user_hash'";
+$result = mysqli_query($db_connection, $query) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $query");;
 $row = mysqli_fetch_array($result);
 if (!($row == false)) {
     //activate the user account
-    $sql = "UPDATE users SET activation_status = 'activated', user_hash = '' WHERE users.id='$user_id'";
-    $result = mysqli_query($db_connection, $sql) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $sql");
+    $query = "UPDATE users SET activation_status = 'activated', user_hash = '' WHERE users.id='$user_id'";
+    $result = mysqli_query($db_connection, $query) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $query");
     if (!($result == false)) {
         echo "user account activated";
     }

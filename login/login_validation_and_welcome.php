@@ -22,17 +22,16 @@ mysqli_close($db_connection);
 */
 function validateEmailAndPassword($email_address, $password, $db_connection)
 {
-    $sql = "select * from users where users.email='$email_address' and users.password='$password' and users.activation_status='activated'";
-    $result = mysqli_query($db_connection, $sql) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $sql");
+    $query = "select * from users where users.email='$email_address' and users.password='$password' and users.activation_status='activated'";
+    $result = mysqli_query($db_connection, $query) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $query");
     $row = mysqli_fetch_array($result);
     if (!($row == false)) {
-
         if ($row['access_level'] == 'normal') {
             displayNormalUserData($row);
         } else {
             displayNormalUserData($row);
-            $sql = "select * from users where users.email!='$email_address'";
-            $result = mysqli_query($db_connection, $sql) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $sql");
+            $query = 'select * from users where users.id!=' .$row["id"];
+            $result = mysqli_query($db_connection, $query) or die("MySQL error: " . mysqli_error($db_connection) . "<hr>\nQuery: $query");
             displayAdminUserData($result);
         }
       } else {
