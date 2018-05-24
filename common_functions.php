@@ -23,10 +23,6 @@ function createDataBaseConnection($db_host, $db_user, $db_password)
 */
 function executeQuery($db_connection, $sql_query)
 {
-    if (mysqli_query($db_connection, $sql_query)) {
-        echo "New record created successfully";
-    } else {
-        echo 'Error in query execution: ' . mysqli_error($db_connection) .' <br>';
-    }
-    return mysqli_insert_id($db_connection);
+    return mysqli_query($db_connection, $sql_query);
+    // return mysqli_insert_id($db_connection);
 }
